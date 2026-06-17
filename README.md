@@ -1,0 +1,166 @@
+# @vpnsin-labs/react-faq-chatbot
+
+A small, **framework-agnostic FAQ support chatbot** widget for React. Works in
+**Vite**, **Next.js**, **CRA**, Remix, Astro — anywhere React 16.8+ runs.
+
+- 🔎 **Smart FAQ search** — token + synonym matching with confidence scoring (no exact-match brittleness).
+- 🤖 **Optional pluggable AI fallback** — bring your own LLM/backend; used only when no FAQ matches.
+- 🎨 **Themeable, self-contained CSS** — one stylesheet, theme via CSS variables. No Tailwind required.
+- 🪶 **Zero icon-library dependency** — ships tiny inline SVGs (override any of them).
+- ♿ **Accessible** — dialog semantics, `aria-live` log, focus rings, reduced-motion, ESC to close.
+- 💾 **Persistent threads** — `session` / `local` / `none`.
+- 📦 **Tiny peer surface** — only `react` + `react-dom`.
+
+---
+
+## Install
+
+```bash
+npm i @vpnsin-labs/react-faq-chatbot
+```
+
+## Quick start
+
+```tsx
+import { Chatbot } from "@vpnsin-labs/react-faq-chatbot";
+import "@vpnsin-labs/react-faq-chatbot/styles.css"; // import once, anywhere
+
+const faqs = [
+  { id: 1, question: "How do I create an account?", answer: "Click Sign Up…" },
+  { id: 2, question: "How much does it cost?", answer: "Plans start at $9/mo…" },
+];
+
+export default function App() {
+  return <Chatbot faqs={faqs} labels={{ title: "Support" }} />;
+}
+```
+
+That's it — a floating launcher appears bottom-right.
+
+> **Next.js:** the widget uses browser APIs, so render it from a Client
+> Component (`"use client"`). See [`examples/nextjs-app.tsx`](./examples/nextjs-app.tsx).
+
+---
+
+## Theming
+
+Override any [`--rfc-*` token](./src/styles.css) inline via the `theme` prop:
+
+```tsx
+<Chatbot
+  faqs={faqs}
+  theme={{ primary: "#7c3aed", radius: "12px", panelWidth: "400px" }}
+/>
+```
+
+**Dark mode** follows the OS preference automatically. Force it by setting
+`data-rfc-theme="dark"` (or `"light"`) on the widget or any ancestor element.
+
+You can also override tokens in your own CSS:
+
+```css
+.rfc-root { --rfc-primary: #16a34a; }
+```
+
+---
+
+## AI fallback (optional)
+
+When the FAQ search finds no confident match, the widget calls your `aiAdapter`.
+Keep API keys on the server — point the adapter at your own endpoint:
+
+```tsx
+import type { AiAdapter } from "@vpnsin-labs/react-faq-chatbot";
+
+const aiAdapter: AiAdapter = async ({ message, history, faqContext }) => {
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    body: JSON.stringify({ message, history, faqContext }),
+  });
+  if (!res.ok) return null;       // null → falls back to the contact card
+  return (await res.json()).answer;
+};
+
+<Chatbot faqs={faqs} aiAdapter={aiAdapter} />;
+```
+
+`faqContext` contains the top-ranked FAQ entries for the query — use them to
+ground the model (RAG-style). If `aiAdapter` is omitted, the widget is pure
+search + contact handoff (no backend needed).
+
+---
+
+## Quick topics & contact handoff
+
+```tsx
+import { Chatbot, CONTACT_INTENT } from "@vpnsin-labs/react-faq-chatbot";
+
+<Chatbot
+  faqs={faqs}
+  quickTopics={[
+    { label: "Pricing", seed: "pricing plans cost" },
+    { label: "Talk to us", seed: CONTACT_INTENT }, // opens the contact card
+  ]}
+  contactChannels={[
+    { type: "email", label: "Email us", value: "support@acme.com" },
+    { type: "phone", label: "Call us", value: "+1 555 010 2030" },
+    { type: "whatsapp", label: "WhatsApp", value: "+1 555 010 2030", prefill: "Hi!" },
+    { type: "link", label: "Help center", value: "https://help.acme.com" },
+  ]}
+/>;
+```
+
+## Domain synonyms
+
+Improve recall for your jargon (merged over the built-in defaults):
+
+```tsx
+<Chatbot
+  faqs={faqs}
+  synonyms={{ moq: ["minimum", "order", "quantity"], sku: ["item", "product"] }}
+/>
+```
+
+---
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `faqs` | `FAQItem[] \| () => FAQItem[] \| Promise<FAQItem[]>` | — | **Required.** Knowledge base (array or async loader). |
+| `aiAdapter` | `AiAdapter` | — | Optional AI fallback when no FAQ matches. |
+| `synonyms` | `Record<string,string[]>` | built-ins | Domain vocabulary expansion. |
+| `quickTopics` | `QuickTopic[]` | `[]` | Starter chips on a fresh thread. |
+| `contactChannels` | `ContactChannel[]` | `[]` | Human-handoff card links. |
+| `labels` | `Partial<ChatbotLabels>` | English defaults | Copy overrides. |
+| `theme` | `ChatbotTheme` | — | `--rfc-*` CSS-variable overrides. |
+| `position` | `"bottom-right" \| "bottom-left"` | `"bottom-right"` | Dock corner. |
+| `persistence` | `"session" \| "local" \| "none"` | `"session"` | Where to persist the thread. |
+| `storageKey` | `string` | `"rfc.chat.v1"` | Persistence key. |
+| `defaultOpen` | `boolean` | `false` | Start open. |
+| `open` / `onOpenChange` | `boolean` / `(b)=>void` | — | Controlled open state. |
+| `showLauncher` | `boolean` | `true` | Render the floating button. |
+| `typingDelayMs` | `number` | `600` | Simulated reply delay. |
+| `nudge` | `{ text; delayMs? } \| false` | — | One-time welcome bubble. |
+| `confidence` | `{ answerCoverage?; suggestCount? }` | — | Search resolver tuning. |
+| `onEvent` | `(e: ChatbotEvent) => void` | — | Analytics hook (`open`, `message_sent`, `faq_answered`, `ai_answered`, `contact_clicked`, …). |
+| `icons` | `IconSet` | inline SVGs | Override any glyph. |
+
+---
+
+## Headless usage
+
+Build your own UI on the engine:
+
+```tsx
+import { searchFAQs, resolveFaqQuery, useChatbot } from "@vpnsin-labs/react-faq-chatbot";
+
+const hits = searchFAQs("how do i pay", faqs);        // ScoredFAQ[]
+const result = resolveFaqQuery("how do i pay", faqs); // answer | suggestions | none
+```
+
+---
+
+## License
+
+MIT © vpnsin-labs

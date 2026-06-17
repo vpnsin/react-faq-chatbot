@@ -1,0 +1,73 @@
+{
+  "name": "@vpnsin-labs/react-faq-chatbot",
+  "version": "0.1.0",
+  "description": "A framework-agnostic, themeable FAQ support chatbot widget for React, Vite and Next.js. Token + synonym search, optional pluggable AI fallback, zero icon-library dependency.",
+  "keywords": [
+    "react",
+    "chatbot",
+    "faq",
+    "support",
+    "widget",
+    "nextjs",
+    "vite",
+    "customer-support",
+    "ai",
+    "live-chat"
+  ],
+  "license": "MIT",
+  "author": "vpnsin-labs",
+  "homepage": "https://github.com/vpnsin/react-faq-chatbot#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vpnsin/react-faq-chatbot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vpnsin/react-faq-chatbot/issues"
+  },
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

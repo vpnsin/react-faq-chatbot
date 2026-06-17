@@ -1,0 +1,554 @@
+/* ==========================================================================
+   @vpnsin-labs/react-faq-chatbot
+   Self-contained, framework-agnostic styles. Scoped under `.rfc-root` so they
+   never collide with the host app. Theme everything via the `--rfc-*` CSS
+   variables below (override them with the `theme` prop, or in your own CSS).
+   ========================================================================== */
+
+.rfc-root {
+  /* ---- Theme tokens (override these to re-skin) ---- */
+  --rfc-primary: #2563eb;
+  --rfc-primary-foreground: #ffffff;
+  --rfc-surface: #ffffff;
+  --rfc-surface-muted: #f8fafc;
+  --rfc-foreground: #0f172a;
+  --rfc-muted-foreground: #64748b;
+  --rfc-border: #e2e8f0;
+  --rfc-agent-bubble: #f1f5f9;
+  --rfc-user-bubble: var(--rfc-primary);
+  --rfc-radius: 16px;
+  --rfc-font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --rfc-launcher-size: 56px;
+  --rfc-panel-width: 380px;
+  --rfc-panel-height: 560px;
+  --rfc-z-index: 2147483000;
+
+  /* ---- Internals ---- */
+  position: fixed;
+  bottom: 20px;
+  z-index: var(--rfc-z-index);
+  font-family: var(--rfc-font-family);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  color: var(--rfc-foreground);
+  box-sizing: border-box;
+}
+.rfc-root *,
+.rfc-root *::before,
+.rfc-root *::after {
+  box-sizing: border-box;
+}
+
+.rfc-bottom-right {
+  right: 20px;
+  align-items: flex-end;
+}
+.rfc-bottom-left {
+  left: 20px;
+  align-items: flex-start;
+}
+
+/* ---------- Launcher ---------- */
+.rfc-launcher {
+  width: var(--rfc-launcher-size);
+  height: var(--rfc-launcher-size);
+  border-radius: 9999px;
+  border: none;
+  background: var(--rfc-primary);
+  color: var(--rfc-primary-foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.18);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+.rfc-launcher:hover {
+  transform: translateY(-2px) scale(1.04);
+}
+.rfc-launcher:focus-visible {
+  outline: 2px solid var(--rfc-primary);
+  outline-offset: 3px;
+}
+.rfc-launcher__icon {
+  display: inline-flex;
+  transition: transform 0.2s ease;
+}
+.rfc-launcher--open .rfc-launcher__icon {
+  transform: rotate(90deg);
+}
+
+/* ---------- Welcome nudge ---------- */
+.rfc-nudge {
+  position: relative;
+  max-width: 240px;
+  background: var(--rfc-surface);
+  color: var(--rfc-foreground);
+  border: 1px solid var(--rfc-border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.2);
+  animation: rfc-pop 0.25s ease-out;
+}
+.rfc-nudge__body {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  padding: 0;
+}
+.rfc-nudge__close {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: var(--rfc-muted-foreground);
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.rfc-nudge__close:hover {
+  background: var(--rfc-surface-muted);
+}
+.rfc-nudge__close svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ---------- Panel ---------- */
+.rfc-panel {
+  width: var(--rfc-panel-width);
+  max-width: calc(100vw - 32px);
+  height: var(--rfc-panel-height);
+  max-height: calc(100vh - 120px);
+  background: var(--rfc-surface);
+  border: 1px solid var(--rfc-border);
+  border-radius: var(--rfc-radius);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: rfc-pop 0.18s ease-out;
+}
+
+/* ---------- Header ---------- */
+.rfc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px;
+  background: var(--rfc-primary);
+  color: var(--rfc-primary-foreground);
+}
+.rfc-header__id {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.rfc-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.18);
+}
+.rfc-avatar svg {
+  width: 18px;
+  height: 18px;
+}
+.rfc-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.rfc-subtitle {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.85;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.rfc-online-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: #34d399;
+  box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6);
+  animation: rfc-ping 2s ease-out infinite;
+}
+.rfc-header__actions {
+  display: flex;
+  gap: 2px;
+}
+.rfc-iconbtn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: transparent;
+  color: var(--rfc-primary-foreground);
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+.rfc-iconbtn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  opacity: 1;
+}
+.rfc-iconbtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---------- Message log ---------- */
+.rfc-log {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  background: var(--rfc-surface-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
+}
+.rfc-row {
+  display: flex;
+}
+.rfc-row--start {
+  justify-content: flex-start;
+}
+.rfc-row--end {
+  justify-content: flex-end;
+}
+
+.rfc-bubble {
+  max-width: 80%;
+  padding: 9px 12px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+.rfc-bubble--agent {
+  background: var(--rfc-agent-bubble);
+  color: var(--rfc-foreground);
+  border-bottom-left-radius: 4px;
+}
+.rfc-bubble--system {
+  background: var(--rfc-agent-bubble);
+  color: var(--rfc-foreground);
+  border-bottom-left-radius: 4px;
+}
+.rfc-bubble--user {
+  background: var(--rfc-user-bubble);
+  color: var(--rfc-primary-foreground);
+  border-bottom-right-radius: 4px;
+}
+.rfc-bubble--card {
+  max-width: 90%;
+  background: var(--rfc-surface);
+  border: 1px solid var(--rfc-border);
+}
+.rfc-bubble__text {
+  margin: 0;
+  white-space: pre-wrap;
+}
+.rfc-bubble__time {
+  display: block;
+  margin-top: 4px;
+  font-size: 10px;
+  opacity: 0.6;
+}
+
+/* ---------- Suggestions ---------- */
+.rfc-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rfc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-align: left;
+  padding: 7px 10px;
+  border: 1px solid var(--rfc-border);
+  background: var(--rfc-surface-muted);
+  color: var(--rfc-foreground);
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.rfc-chip:hover {
+  border-color: var(--rfc-primary);
+  background: var(--rfc-surface);
+}
+.rfc-chip__icon {
+  display: inline-flex;
+  color: var(--rfc-primary);
+  flex-shrink: 0;
+}
+.rfc-chip__icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ---------- Contact card ---------- */
+.rfc-contact__prompt {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--rfc-muted-foreground);
+}
+.rfc-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rfc-contact__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--rfc-primary);
+  color: var(--rfc-primary-foreground);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: filter 0.15s ease;
+}
+.rfc-contact__link:hover {
+  filter: brightness(0.94);
+}
+.rfc-contact__icon {
+  display: inline-flex;
+}
+.rfc-contact__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---------- Typing indicator ---------- */
+.rfc-typing {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+.rfc-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--rfc-muted-foreground);
+  animation: rfc-bounce 1.2s infinite ease-in-out;
+}
+.rfc-dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.rfc-dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* ---------- Quick topics ---------- */
+.rfc-topics {
+  padding: 10px 14px 0;
+  background: var(--rfc-surface);
+}
+.rfc-topics__heading {
+  margin: 0 0 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--rfc-muted-foreground);
+}
+.rfc-topics__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.rfc-topic {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--rfc-border);
+  background: var(--rfc-surface-muted);
+  color: var(--rfc-foreground);
+  border-radius: 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.rfc-topic:hover {
+  border-color: var(--rfc-primary);
+  transform: translateY(-1px);
+}
+.rfc-topic__icon {
+  display: inline-flex;
+  color: var(--rfc-primary);
+}
+.rfc-topic__icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ---------- Composer ---------- */
+.rfc-composer {
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--rfc-border);
+  background: var(--rfc-surface);
+}
+.rfc-input {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 12px;
+  border: 1px solid var(--rfc-border);
+  border-radius: 10px;
+  background: var(--rfc-surface);
+  color: var(--rfc-foreground);
+  font-size: 14px;
+  font-family: inherit;
+}
+.rfc-input::placeholder {
+  color: var(--rfc-muted-foreground);
+}
+.rfc-input:focus {
+  outline: none;
+  border-color: var(--rfc-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--rfc-primary) 25%, transparent);
+}
+.rfc-send {
+  flex-shrink: 0;
+  width: 40px;
+  border: none;
+  border-radius: 10px;
+  background: var(--rfc-primary);
+  color: var(--rfc-primary-foreground);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: filter 0.15s ease, opacity 0.15s ease;
+}
+.rfc-send:hover:not(:disabled) {
+  filter: brightness(0.94);
+}
+.rfc-send:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.rfc-send svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---------- Utilities ---------- */
+.rfc-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Animations ---------- */
+@keyframes rfc-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes rfc-bounce {
+  0%, 80%, 100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+@keyframes rfc-ping {
+  0% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(52, 211, 153, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0);
+  }
+}
+
+/* ---------- Responsive: full-screen panel on small viewports ---------- */
+@media (max-width: 480px) {
+  .rfc-panel {
+    width: calc(100vw - 24px);
+    height: calc(100vh - 96px);
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .rfc-root *,
+  .rfc-root *::before,
+  .rfc-root *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ==========================================================================
+   Dark mode
+   Opt in by adding `data-rfc-theme="dark"` to the root (or any ancestor), or
+   it follows the OS preference automatically. Override tokens to customise.
+   ========================================================================== */
+@media (prefers-color-scheme: dark) {
+  .rfc-root:not([data-rfc-theme="light"]) {
+    --rfc-surface: #0f172a;
+    --rfc-surface-muted: #1e293b;
+    --rfc-foreground: #f1f5f9;
+    --rfc-muted-foreground: #94a3b8;
+    --rfc-border: #334155;
+    --rfc-agent-bubble: #1e293b;
+  }
+}
+[data-rfc-theme="dark"] .rfc-root,
+.rfc-root[data-rfc-theme="dark"] {
+  --rfc-surface: #0f172a;
+  --rfc-surface-muted: #1e293b;
+  --rfc-foreground: #f1f5f9;
+  --rfc-muted-foreground: #94a3b8;
+  --rfc-border: #334155;
+  --rfc-agent-bubble: #1e293b;
+}
