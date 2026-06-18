@@ -10,24 +10,93 @@
 // escalate to a human / AI fallback.
 // ---------------------------------------------------------------------------
 
-import type {
-  FAQItem,
-  FAQResolution,
-  ResolveOptions,
-  ScoredFAQ,
-  SynonymMap,
-} from "../types";
+import type { FAQItem, FAQResolution, ResolveOptions, ScoredFAQ, SynonymMap } from '../types';
 
 // Very common words carry no signal — drop them so they don't inflate scores.
 const STOP_WORDS = new Set([
-  "a", "an", "the", "is", "are", "am", "be", "been", "was", "were", "to", "of",
-  "for", "and", "or", "in", "on", "at", "by", "with", "from", "as", "it", "its",
-  "this", "that", "these", "those", "do", "does", "did", "can", "could",
-  "would", "should", "will", "shall", "what", "whats", "which", "who", "whom",
-  "how", "when", "where", "why", "your", "you", "we", "our", "us", "i", "me",
-  "my", "have", "has", "had", "if", "about", "into", "out", "up", "down", "any",
-  "some", "there", "here", "their", "they", "them", "please", "thanks", "thank",
-  "hi", "hello", "hey", "tell", "give", "want", "need", "know", "get", "got",
+  'a',
+  'an',
+  'the',
+  'is',
+  'are',
+  'am',
+  'be',
+  'been',
+  'was',
+  'were',
+  'to',
+  'of',
+  'for',
+  'and',
+  'or',
+  'in',
+  'on',
+  'at',
+  'by',
+  'with',
+  'from',
+  'as',
+  'it',
+  'its',
+  'this',
+  'that',
+  'these',
+  'those',
+  'do',
+  'does',
+  'did',
+  'can',
+  'could',
+  'would',
+  'should',
+  'will',
+  'shall',
+  'what',
+  'whats',
+  'which',
+  'who',
+  'whom',
+  'how',
+  'when',
+  'where',
+  'why',
+  'your',
+  'you',
+  'we',
+  'our',
+  'us',
+  'i',
+  'me',
+  'my',
+  'have',
+  'has',
+  'had',
+  'if',
+  'about',
+  'into',
+  'out',
+  'up',
+  'down',
+  'any',
+  'some',
+  'there',
+  'here',
+  'their',
+  'they',
+  'them',
+  'please',
+  'thanks',
+  'thank',
+  'hi',
+  'hello',
+  'hey',
+  'tell',
+  'give',
+  'want',
+  'need',
+  'know',
+  'get',
+  'got',
 ]);
 
 /**
@@ -35,37 +104,37 @@ const STOP_WORDS = new Set([
  * `synonyms` (merged over these) for vocabulary specific to their product.
  */
 export const DEFAULT_SYNONYMS: SynonymMap = {
-  price: ["pricing", "cost", "rate", "quote", "fee", "fees"],
-  pricing: ["price", "cost", "rate", "quote"],
-  cost: ["price", "pricing", "rate", "fee"],
-  buy: ["purchase", "order", "checkout"],
-  cancel: ["cancellation", "stop", "end", "terminate"],
-  refund: ["refunds", "return", "money", "back"],
-  account: ["profile", "login", "signin", "signup", "register"],
-  password: ["passcode", "login", "reset", "forgot"],
-  contact: ["email", "phone", "call", "support", "reach", "help"],
-  ship: ["shipping", "delivery", "deliver", "dispatch"],
-  delivery: ["shipping", "deliver", "dispatch", "time"],
+  price: ['pricing', 'cost', 'rate', 'quote', 'fee', 'fees'],
+  pricing: ['price', 'cost', 'rate', 'quote'],
+  cost: ['price', 'pricing', 'rate', 'fee'],
+  buy: ['purchase', 'order', 'checkout'],
+  cancel: ['cancellation', 'stop', 'end', 'terminate'],
+  refund: ['refunds', 'return', 'money', 'back'],
+  account: ['profile', 'login', 'signin', 'signup', 'register'],
+  password: ['passcode', 'login', 'reset', 'forgot'],
+  contact: ['email', 'phone', 'call', 'support', 'reach', 'help'],
+  ship: ['shipping', 'delivery', 'deliver', 'dispatch'],
+  delivery: ['shipping', 'deliver', 'dispatch', 'time'],
 };
 
 const normalise = (text: string): string =>
   text
     .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, " ")
-    .replace(/\s+/g, " ")
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
     .trim();
 
 // Light stemming: collapse trivial plurals ("plates"≈"plate", "duties"≈"duty").
 // Applied to both query and index, so variants just need to map to one root.
 const stem = (w: string): string => {
-  if (w.length > 4 && w.endsWith("ies")) return w.slice(0, -3) + "y";
-  if (w.length > 3 && w.endsWith("s") && !w.endsWith("ss")) return w.slice(0, -1);
+  if (w.length > 4 && w.endsWith('ies')) return w.slice(0, -3) + 'y';
+  if (w.length > 3 && w.endsWith('s') && !w.endsWith('ss')) return w.slice(0, -1);
   return w;
 };
 
 const tokenize = (text: string): string[] =>
   normalise(text)
-    .split(" ")
+    .split(' ')
     .filter((w) => w.length > 1 && !STOP_WORDS.has(w))
     .map(stem);
 
@@ -82,10 +151,7 @@ const expand = (tokens: string[], synonyms: SynonymMap): Set<string> => {
 
 // Per-item token index, memoised per (item, synonym-map) so repeated searches
 // are cheap. Keyed by the synonym object identity to stay correct if it changes.
-const indexCache = new WeakMap<
-  SynonymMap,
-  WeakMap<FAQItem, { q: Set<string>; a: Set<string> }>
->();
+const indexCache = new WeakMap<SynonymMap, WeakMap<FAQItem, { q: Set<string>; a: Set<string> }>>();
 
 const indexOf = (item: FAQItem, synonyms: SynonymMap) => {
   let perMap = indexCache.get(synonyms);
@@ -183,13 +249,13 @@ export function resolveFaqQuery(
   } = options;
 
   const results = searchFAQs(query, faqs, { limit, synonyms });
-  if (results.length === 0) return { type: "none" };
+  if (results.length === 0) return { type: 'none' };
 
   if (isConfidentMatch(results, answerCoverage)) {
-    return { type: "answer", item: results[0].item };
+    return { type: 'answer', item: results[0].item };
   }
   return {
-    type: "suggestions",
+    type: 'suggestions',
     items: results.slice(0, suggestCount).map((r) => r.item),
   };
 }

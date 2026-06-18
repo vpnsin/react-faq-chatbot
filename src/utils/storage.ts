@@ -1,12 +1,12 @@
-import type { PersistenceMode } from "../types";
+import type { PersistenceMode } from '../types';
 
 // Safe storage helpers — never throw in private mode / SSR / disabled storage.
 
 const getStore = (mode: PersistenceMode): Storage | null => {
-  if (mode === "none") return null;
-  if (typeof window === "undefined") return null;
+  if (mode === 'none') return null;
+  if (typeof window === 'undefined') return null;
   try {
-    return mode === "local" ? window.localStorage : window.sessionStorage;
+    return mode === 'local' ? window.localStorage : window.sessionStorage;
   } catch {
     return null;
   }

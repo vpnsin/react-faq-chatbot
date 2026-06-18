@@ -1,5 +1,5 @@
-import type { ReactNode, SVGProps } from "react";
-import type { IconSet } from "../types";
+import type { ReactNode, SVGProps } from 'react';
+import type { IconSet } from '../types';
 
 // Tiny, dependency-free inline SVG glyphs (stroke = currentColor) so the library
 // never forces an icon package on consumers. Any glyph can be overridden via the
@@ -8,13 +8,13 @@ import type { IconSet } from "../types";
 const base = (props: SVGProps<SVGSVGElement>): SVGProps<SVGSVGElement> => ({
   width: 20,
   height: 20,
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
   strokeWidth: 2,
-  strokeLinecap: "round",
-  strokeLinejoin: "round",
-  "aria-hidden": true,
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
+  'aria-hidden': true,
   focusable: false,
   ...props,
 });
@@ -66,7 +66,7 @@ export const DefaultIcons: Required<IconSet> = {
     </svg>
   ),
   whatsapp: (
-    <svg {...base({ stroke: "none", fill: "currentColor" })}>
+    <svg {...base({ stroke: 'none', fill: 'currentColor' })}>
       <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 1.8c2.17 0 4.21.85 5.74 2.38a8.06 8.06 0 0 1 2.38 5.73c0 4.48-3.64 8.12-8.12 8.12h-.01a8.14 8.14 0 0 1-4.13-1.13l-.3-.18-3.07.8.82-3-.19-.31a8.04 8.04 0 0 1-1.26-4.31c0-4.48 3.64-8.12 8.12-8.12zm-2.78 4.4c-.13 0-.34.05-.52.24-.18.19-.69.67-.69 1.64 0 .96.71 1.9.81 2.03.1.13 1.4 2.14 3.4 3 1.66.72 2 .57 2.36.54.36-.03 1.16-.47 1.32-.93.16-.46.16-.85.11-.93-.05-.08-.18-.13-.38-.23-.2-.1-1.16-.57-1.34-.64-.18-.06-.31-.1-.44.1-.13.19-.5.64-.62.77-.11.13-.23.15-.42.05-.2-.1-.83-.31-1.59-.98-.59-.52-.98-1.17-1.1-1.37-.11-.19-.01-.3.09-.39.09-.09.2-.23.3-.35.1-.12.13-.2.2-.34.06-.13.03-.25-.02-.35-.05-.1-.43-1.08-.6-1.47-.16-.39-.32-.33-.43-.34h-.38z" />
     </svg>
   ),

@@ -22,16 +22,16 @@ npm i @vpnsin-labs/react-faq-chatbot
 ## Quick start
 
 ```tsx
-import { Chatbot } from "@vpnsin-labs/react-faq-chatbot";
-import "@vpnsin-labs/react-faq-chatbot/styles.css"; // import once, anywhere
+import { Chatbot } from '@vpnsin-labs/react-faq-chatbot';
+import '@vpnsin-labs/react-faq-chatbot/styles.css'; // import once, anywhere
 
 const faqs = [
-  { id: 1, question: "How do I create an account?", answer: "Click Sign Up…" },
-  { id: 2, question: "How much does it cost?", answer: "Plans start at $9/mo…" },
+  { id: 1, question: 'How do I create an account?', answer: 'Click Sign Up…' },
+  { id: 2, question: 'How much does it cost?', answer: 'Plans start at $9/mo…' },
 ];
 
 export default function App() {
-  return <Chatbot faqs={faqs} labels={{ title: "Support" }} />;
+  return <Chatbot faqs={faqs} labels={{ title: 'Support' }} />;
 }
 ```
 
@@ -47,10 +47,7 @@ That's it — a floating launcher appears bottom-right.
 Override any [`--rfc-*` token](./src/styles.css) inline via the `theme` prop:
 
 ```tsx
-<Chatbot
-  faqs={faqs}
-  theme={{ primary: "#7c3aed", radius: "12px", panelWidth: "400px" }}
-/>
+<Chatbot faqs={faqs} theme={{ primary: '#7c3aed', radius: '12px', panelWidth: '400px' }} />
 ```
 
 **Dark mode** follows the OS preference automatically. Force it by setting
@@ -59,7 +56,9 @@ Override any [`--rfc-*` token](./src/styles.css) inline via the `theme` prop:
 You can also override tokens in your own CSS:
 
 ```css
-.rfc-root { --rfc-primary: #16a34a; }
+.rfc-root {
+  --rfc-primary: #16a34a;
+}
 ```
 
 ---
@@ -70,14 +69,14 @@ When the FAQ search finds no confident match, the widget calls your `aiAdapter`.
 Keep API keys on the server — point the adapter at your own endpoint:
 
 ```tsx
-import type { AiAdapter } from "@vpnsin-labs/react-faq-chatbot";
+import type { AiAdapter } from '@vpnsin-labs/react-faq-chatbot';
 
 const aiAdapter: AiAdapter = async ({ message, history, faqContext }) => {
-  const res = await fetch("/api/chat", {
-    method: "POST",
+  const res = await fetch('/api/chat', {
+    method: 'POST',
     body: JSON.stringify({ message, history, faqContext }),
   });
-  if (!res.ok) return null;       // null → falls back to the contact card
+  if (!res.ok) return null; // null → falls back to the contact card
   return (await res.json()).answer;
 };
 
@@ -93,19 +92,19 @@ search + contact handoff (no backend needed).
 ## Quick topics & contact handoff
 
 ```tsx
-import { Chatbot, CONTACT_INTENT } from "@vpnsin-labs/react-faq-chatbot";
+import { Chatbot, CONTACT_INTENT } from '@vpnsin-labs/react-faq-chatbot';
 
 <Chatbot
   faqs={faqs}
   quickTopics={[
-    { label: "Pricing", seed: "pricing plans cost" },
-    { label: "Talk to us", seed: CONTACT_INTENT }, // opens the contact card
+    { label: 'Pricing', seed: 'pricing plans cost' },
+    { label: 'Talk to us', seed: CONTACT_INTENT }, // opens the contact card
   ]}
   contactChannels={[
-    { type: "email", label: "Email us", value: "support@acme.com" },
-    { type: "phone", label: "Call us", value: "+1 555 010 2030" },
-    { type: "whatsapp", label: "WhatsApp", value: "+1 555 010 2030", prefill: "Hi!" },
-    { type: "link", label: "Help center", value: "https://help.acme.com" },
+    { type: 'email', label: 'Email us', value: 'support@acme.com' },
+    { type: 'phone', label: 'Call us', value: '+1 555 010 2030' },
+    { type: 'whatsapp', label: 'WhatsApp', value: '+1 555 010 2030', prefill: 'Hi!' },
+    { type: 'link', label: 'Help center', value: 'https://help.acme.com' },
   ]}
 />;
 ```
@@ -117,7 +116,7 @@ Improve recall for your jargon (merged over the built-in defaults):
 ```tsx
 <Chatbot
   faqs={faqs}
-  synonyms={{ moq: ["minimum", "order", "quantity"], sku: ["item", "product"] }}
+  synonyms={{ moq: ['minimum', 'order', 'quantity'], sku: ['item', 'product'] }}
 />
 ```
 
@@ -125,26 +124,26 @@ Improve recall for your jargon (merged over the built-in defaults):
 
 ## Props
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `faqs` | `FAQItem[] \| () => FAQItem[] \| Promise<FAQItem[]>` | — | **Required.** Knowledge base (array or async loader). |
-| `aiAdapter` | `AiAdapter` | — | Optional AI fallback when no FAQ matches. |
-| `synonyms` | `Record<string,string[]>` | built-ins | Domain vocabulary expansion. |
-| `quickTopics` | `QuickTopic[]` | `[]` | Starter chips on a fresh thread. |
-| `contactChannels` | `ContactChannel[]` | `[]` | Human-handoff card links. |
-| `labels` | `Partial<ChatbotLabels>` | English defaults | Copy overrides. |
-| `theme` | `ChatbotTheme` | — | `--rfc-*` CSS-variable overrides. |
-| `position` | `"bottom-right" \| "bottom-left"` | `"bottom-right"` | Dock corner. |
-| `persistence` | `"session" \| "local" \| "none"` | `"session"` | Where to persist the thread. |
-| `storageKey` | `string` | `"rfc.chat.v1"` | Persistence key. |
-| `defaultOpen` | `boolean` | `false` | Start open. |
-| `open` / `onOpenChange` | `boolean` / `(b)=>void` | — | Controlled open state. |
-| `showLauncher` | `boolean` | `true` | Render the floating button. |
-| `typingDelayMs` | `number` | `600` | Simulated reply delay. |
-| `nudge` | `{ text; delayMs? } \| false` | — | One-time welcome bubble. |
-| `confidence` | `{ answerCoverage?; suggestCount? }` | — | Search resolver tuning. |
-| `onEvent` | `(e: ChatbotEvent) => void` | — | Analytics hook (`open`, `message_sent`, `faq_answered`, `ai_answered`, `contact_clicked`, …). |
-| `icons` | `IconSet` | inline SVGs | Override any glyph. |
+| Prop                    | Type                                                 | Default          | Description                                                                                   |
+| ----------------------- | ---------------------------------------------------- | ---------------- | --------------------------------------------------------------------------------------------- |
+| `faqs`                  | `FAQItem[] \| () => FAQItem[] \| Promise<FAQItem[]>` | —                | **Required.** Knowledge base (array or async loader).                                         |
+| `aiAdapter`             | `AiAdapter`                                          | —                | Optional AI fallback when no FAQ matches.                                                     |
+| `synonyms`              | `Record<string,string[]>`                            | built-ins        | Domain vocabulary expansion.                                                                  |
+| `quickTopics`           | `QuickTopic[]`                                       | `[]`             | Starter chips on a fresh thread.                                                              |
+| `contactChannels`       | `ContactChannel[]`                                   | `[]`             | Human-handoff card links.                                                                     |
+| `labels`                | `Partial<ChatbotLabels>`                             | English defaults | Copy overrides.                                                                               |
+| `theme`                 | `ChatbotTheme`                                       | —                | `--rfc-*` CSS-variable overrides.                                                             |
+| `position`              | `"bottom-right" \| "bottom-left"`                    | `"bottom-right"` | Dock corner.                                                                                  |
+| `persistence`           | `"session" \| "local" \| "none"`                     | `"session"`      | Where to persist the thread.                                                                  |
+| `storageKey`            | `string`                                             | `"rfc.chat.v1"`  | Persistence key.                                                                              |
+| `defaultOpen`           | `boolean`                                            | `false`          | Start open.                                                                                   |
+| `open` / `onOpenChange` | `boolean` / `(b)=>void`                              | —                | Controlled open state.                                                                        |
+| `showLauncher`          | `boolean`                                            | `true`           | Render the floating button.                                                                   |
+| `typingDelayMs`         | `number`                                             | `600`            | Simulated reply delay.                                                                        |
+| `nudge`                 | `{ text; delayMs? } \| false`                        | —                | One-time welcome bubble.                                                                      |
+| `confidence`            | `{ answerCoverage?; suggestCount? }`                 | —                | Search resolver tuning.                                                                       |
+| `onEvent`               | `(e: ChatbotEvent) => void`                          | —                | Analytics hook (`open`, `message_sent`, `faq_answered`, `ai_answered`, `contact_clicked`, …). |
+| `icons`                 | `IconSet`                                            | inline SVGs      | Override any glyph.                                                                           |
 
 ---
 
@@ -153,10 +152,10 @@ Improve recall for your jargon (merged over the built-in defaults):
 Build your own UI on the engine:
 
 ```tsx
-import { searchFAQs, resolveFaqQuery, useChatbot } from "@vpnsin-labs/react-faq-chatbot";
+import { searchFAQs, resolveFaqQuery, useChatbot } from '@vpnsin-labs/react-faq-chatbot';
 
-const hits = searchFAQs("how do i pay", faqs);        // ScoredFAQ[]
-const result = resolveFaqQuery("how do i pay", faqs); // answer | suggestions | none
+const hits = searchFAQs('how do i pay', faqs); // ScoredFAQ[]
+const result = resolveFaqQuery('how do i pay', faqs); // answer | suggestions | none
 ```
 
 ---

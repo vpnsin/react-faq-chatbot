@@ -1,33 +1,33 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import type {
   ChatbotEvent,
   ChatbotLabels,
   ChatbotProps,
   ChatbotTheme,
   ContactChannel,
-} from "../types";
-import { DEFAULT_SYNONYMS } from "../search/faqSearch";
-import { useChatbot } from "../hooks/useChatbot";
-import { ChatLauncher } from "./ChatLauncher";
-import { ChatPanel } from "./ChatPanel";
+} from '../types';
+import { DEFAULT_SYNONYMS } from '../search/faqSearch';
+import { useChatbot } from '../hooks/useChatbot';
+import { ChatLauncher } from './ChatLauncher';
+import { ChatPanel } from './ChatPanel';
 
 const DEFAULT_LABELS: ChatbotLabels = {
-  title: "Support",
-  subtitle: "Typically replies instantly",
-  greeting: "Hi! 👋 How can I help you today?",
-  placeholder: "Type your message…",
-  suggestionsPrompt: "Here are a few things that might help — did you mean one of these?",
+  title: 'Support',
+  subtitle: 'Typically replies instantly',
+  greeting: 'Hi! 👋 How can I help you today?',
+  placeholder: 'Type your message…',
+  suggestionsPrompt: 'Here are a few things that might help — did you mean one of these?',
   noMatch: "I couldn't find an answer to that. Would you like to reach our team?",
-  contactPrompt: "Get in touch with us directly:",
-  quickTopicsHeading: "Popular topics",
-  launcherAriaLabel: "Open support chat",
-  closeAriaLabel: "Close",
-  resetAriaLabel: "Reset conversation",
-  sendAriaLabel: "Send message",
-  online: "Online",
+  contactPrompt: 'Get in touch with us directly:',
+  quickTopicsHeading: 'Popular topics',
+  launcherAriaLabel: 'Open support chat',
+  closeAriaLabel: 'Close',
+  resetAriaLabel: 'Reset conversation',
+  sendAriaLabel: 'Send message',
+  online: 'Online',
 };
 
-const DEFAULT_STORAGE_KEY = "rfc.chat.v1";
+const DEFAULT_STORAGE_KEY = 'rfc.chat.v1';
 
 // camelCase token -> `--rfc-kebab-case` CSS variable.
 function themeToStyle(theme?: ChatbotTheme): CSSProperties {
@@ -50,8 +50,8 @@ export function Chatbot(props: ChatbotProps) {
     contactChannels = [],
     labels: labelOverrides,
     theme,
-    position = "bottom-right",
-    persistence = "session",
+    position = 'bottom-right',
+    persistence = 'session',
     storageKey = DEFAULT_STORAGE_KEY,
     defaultOpen = false,
     showLauncher = true,
@@ -88,7 +88,7 @@ export function Chatbot(props: ChatbotProps) {
     (next: boolean) => {
       if (!isControlled) setInternalOpen(next);
       onOpenChange?.(next);
-      emit({ type: next ? "open" : "close" });
+      emit({ type: next ? 'open' : 'close' });
     },
     [isControlled, onOpenChange, emit]
   );
@@ -114,14 +114,14 @@ export function Chatbot(props: ChatbotProps) {
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === 'Escape') setOpen(false);
     };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   }, [open, setOpen]);
 
   const handleContactClick = useCallback(
-    (channel: ContactChannel) => emit({ type: "contact_clicked", channel }),
+    (channel: ContactChannel) => emit({ type: 'contact_clicked', channel }),
     [emit]
   );
 
@@ -129,9 +129,9 @@ export function Chatbot(props: ChatbotProps) {
 
   return (
     <div
-      className={`rfc-root rfc-${position}${className ? ` ${className}` : ""}`}
+      className={`rfc-root rfc-${position}${className ? ` ${className}` : ''}`}
       style={rootStyle}
-      data-rfc-open={open ? "true" : "false"}
+      data-rfc-open={open ? 'true' : 'false'}
     >
       {open && (
         <ChatPanel

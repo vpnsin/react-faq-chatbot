@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type {
   AiAdapter,
   ChatMessage,
@@ -9,9 +9,9 @@ import type {
   PersistenceMode,
   ResolveOptions,
   SynonymMap,
-} from "../types";
-import { resolveFaqQuery, searchFAQs } from "../search/faqSearch";
-import { readJSON, remove, writeJSON } from "../utils/storage";
+} from '../types';
+import { resolveFaqQuery, searchFAQs } from '../search/faqSearch';
+import { readJSON, remove, writeJSON } from '../utils/storage';
 
 const MAX_STORED = 60;
 const AI_GROUNDING = 5;
@@ -28,7 +28,7 @@ export interface UseChatbotOptions {
   persistence: PersistenceMode;
   storageKey: string;
   typingDelayMs: number;
-  confidence?: Pick<ResolveOptions, "answerCoverage" | "suggestCount">;
+  confidence?: Pick<ResolveOptions, 'answerCoverage' | 'suggestCount'>;
   onEvent?: (event: ChatbotEvent) => void;
 }
 
@@ -68,17 +68,20 @@ export function useChatbot(opts: UseChatbotOptions): ChatbotApi {
   onEventRef.current = onEvent;
   const emit = useCallback((e: ChatbotEvent) => onEventRef.current?.(e), []);
 
-  const initialFaqs = useMemo(
-    () => (Array.isArray(faqSource) ? faqSource : []),
-    [faqSource]
-  );
+  const initialFaqs = useMemo(() => (Array.isArray(faqSource) ? faqSource : []), [faqSource]);
   const [faqs, setFaqs] = useState<FAQItem[]>(initialFaqs);
   const faqsRef = useRef<FAQItem[]>(initialFaqs);
   faqsRef.current = faqs;
 
   const greet = useCallback(
     (): ChatMessage[] => [
-      { id: nextId(), kind: "text", role: "system", content: greeting, at: new Date().toISOString() },
+      {
+        id: nextId(),
+        kind: 'text',
+        role: 'system',
+        content: greeting,
+        at: new Date().toISOString(),
+      },
     ],
     [greeting]
   );
@@ -106,7 +109,7 @@ export function useChatbot(opts: UseChatbotOptions): ChatbotApi {
       .then((loaded) => {
         if (alive && Array.isArray(loaded)) setFaqs(loaded);
       })
-      .catch((error) => emit({ type: "error", error }));
+      .catch((error) => emit({ type: 'error', error }));
     return () => {
       alive = false;
     };
@@ -128,13 +131,13 @@ export function useChatbot(opts: UseChatbotOptions): ChatbotApi {
 
   const pushAgentText = useCallback(
     (content: string) =>
-      append({ id: nextId(), kind: "text", role: "agent", content, at: new Date().toISOString() }),
+      append({ id: nextId(), kind: 'text', role: 'agent', content, at: new Date().toISOString() }),
     [append]
   );
 
   const showContact = useCallback(() => {
-    append({ id: nextId(), kind: "contact", at: new Date().toISOString() });
-    emit({ type: "contact_offered" });
+    append({ id: nextId(), kind: 'contact', at: new Date().toISOString() });
+    emit({ type: 'contact_offered' });
   }, [append, emit]);
 
   const tryAi = useCallback(
@@ -142,16 +145,14 @@ export function useChatbot(opts: UseChatbotOptions): ChatbotApi {
       if (!aiAdapter) return null;
       try {
         const history: ChatTurn[] = messagesRef.current
-          .filter((m): m is Extract<ChatMessage, { kind: "text" }> => m.kind === "text")
+          .filter((m): m is Extract<ChatMessage, { kind: 'text' }> => m.kind === 'text')
           .slice(-HISTORY_TURNS)
-          .map((m) => ({ role: m.role === "user" ? "user" : "assistant", content: m.content }));
+          .map((m) => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content }));
         const ranked = searchFAQs(question, faqsRef.current, { limit: AI_GROUNDING, synonyms });
-        const faqContext = ranked.length
-          ? ranked.map((r) => r.item)
-          : faqsRef.current.slice(0, 6);
+        const faqContext = ranked.length ? ranked.map((r) => r.item) : faqsRef.current.slice(0, 6);
         return await aiAdapter({ message: question, history, faqContext });
       } catch (error) {
-        emit({ type: "error", error });
+        emit({ type: 'error', error });
         return null;
       }
     },
@@ -175,19 +176,24 @@ export function useChatbot(opts: UseChatbotOptions): ChatbotApi {
         synonyms,
       });
 
-      if (resolution.type === "answer") {
+      if (resolution.type === 'answer') {
         settle(() => {
           pushAgentText(resolution.item.answer);
-          emit({ type: "faq_answered", item: resolution.item });
+          emit({ type: 'faq_answered', item: resolution.item });
         });
         return;
       }
 
-      if (resolution.type === "suggestions") {
+      if (resolution.type === 'suggestions') {
         settle(() => {
           pushAgentText(suggestionsPrompt);
-          append({ id: nextId(), kind: "suggestions", items: resolution.items, at: new Date().toISOString() });
-          emit({ type: "suggestions_shown", items: resolution.items });
+          append({
+            id: nextId(),
+            kind: 'suggestions',
+            items: resolution.items,
+            at: new Date().toISOString(),
+          });
+          emit({ type: 'suggestions_shown', items: resolution.items });
         });
         return;
       }
@@ -197,7 +203,7 @@ export function useChatbot(opts: UseChatbotOptions): ChatbotApi {
       settle(() => {
         if (aiAnswer) {
           pushAgentText(aiAnswer);
-          emit({ type: "ai_answered", text: aiAnswer });
+          emit({ type: 'ai_answered', text: aiAnswer });
         } else {
           pushAgentText(noMatch);
           showContact();
@@ -205,8 +211,16 @@ export function useChatbot(opts: UseChatbotOptions): ChatbotApi {
       });
     },
     [
-      typingDelayMs, confidence, synonyms, pushAgentText, append, emit,
-      suggestionsPrompt, tryAi, noMatch, showContact,
+      typingDelayMs,
+      confidence,
+      synonyms,
+      pushAgentText,
+      append,
+      emit,
+      suggestionsPrompt,
+      tryAi,
+      noMatch,
+      showContact,
     ]
   );
 
@@ -214,8 +228,14 @@ export function useChatbot(opts: UseChatbotOptions): ChatbotApi {
     (text: string) => {
       const trimmed = text.trim();
       if (!trimmed || isTyping) return;
-      append({ id: nextId(), kind: "text", role: "user", content: trimmed, at: new Date().toISOString() });
-      emit({ type: "message_sent", text: trimmed });
+      append({
+        id: nextId(),
+        kind: 'text',
+        role: 'user',
+        content: trimmed,
+        at: new Date().toISOString(),
+      });
+      emit({ type: 'message_sent', text: trimmed });
       void respond(trimmed);
     },
     [isTyping, append, emit, respond]
@@ -227,7 +247,7 @@ export function useChatbot(opts: UseChatbotOptions): ChatbotApi {
     setIsTyping(false);
     setMessages(greet());
     remove(persistence, storageKey);
-    emit({ type: "reset" });
+    emit({ type: 'reset' });
     void contactPrompt; // reserved for future "how else can I help" copy
   }, [greet, persistence, storageKey, emit, contactPrompt]);
 

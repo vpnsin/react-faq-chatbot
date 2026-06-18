@@ -1,6 +1,6 @@
-import { useState, type FormEvent } from "react";
-import type { ChatbotLabels, IconSet } from "../types";
-import { getIcon } from "./icons";
+import { useState, type FormEvent } from 'react';
+import type { ChatbotLabels, IconSet } from '../types';
+import { getIcon } from './icons';
 
 interface ComposerProps {
   disabled: boolean;
@@ -11,14 +11,14 @@ interface ComposerProps {
 }
 
 export function Composer({ disabled, labels, icons, maxLength = 500, onSend }: ComposerProps) {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState('');
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
     const text = value.trim();
     if (!text || disabled) return;
     onSend(text);
-    setValue("");
+    setValue('');
   };
 
   return (
@@ -42,7 +42,7 @@ export function Composer({ disabled, labels, icons, maxLength = 500, onSend }: C
         aria-label={labels.sendAriaLabel}
         disabled={disabled || !value.trim()}
       >
-        {getIcon("send", icons)}
+        {getIcon('send', icons)}
       </button>
     </form>
   );

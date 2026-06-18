@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 // ---------------------------------------------------------------------------
 // Knowledge base
@@ -30,9 +30,9 @@ export interface ScoredFAQ {
 
 /** Outcome of resolving a free-text query against the knowledge base. */
 export type FAQResolution =
-  | { type: "answer"; item: FAQItem }
-  | { type: "suggestions"; items: FAQItem[] }
-  | { type: "none" };
+  | { type: 'answer'; item: FAQItem }
+  | { type: 'suggestions'; items: FAQItem[] }
+  | { type: 'none' };
 
 export interface ResolveOptions {
   limit?: number;
@@ -48,7 +48,7 @@ export interface ResolveOptions {
 // ---------------------------------------------------------------------------
 
 export interface ChatTurn {
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
   content: string;
 }
 
@@ -72,7 +72,7 @@ export type AiAdapter = (params: AiAdapterParams) => Promise<string | null>;
 // Conversation messages
 // ---------------------------------------------------------------------------
 
-export type MessageRole = "user" | "agent" | "system";
+export type MessageRole = 'user' | 'agent' | 'system';
 
 interface BaseMessage {
   id: string;
@@ -81,18 +81,18 @@ interface BaseMessage {
 }
 
 export interface TextMessage extends BaseMessage {
-  kind: "text";
+  kind: 'text';
   role: MessageRole;
   content: string;
 }
 
 export interface SuggestionsMessage extends BaseMessage {
-  kind: "suggestions";
+  kind: 'suggestions';
   items: FAQItem[];
 }
 
 export interface ContactMessage extends BaseMessage {
-  kind: "contact";
+  kind: 'contact';
 }
 
 export type ChatMessage = TextMessage | SuggestionsMessage | ContactMessage;
@@ -102,7 +102,7 @@ export type ChatMessage = TextMessage | SuggestionsMessage | ContactMessage;
 // ---------------------------------------------------------------------------
 
 /** Sentinel `seed` value for a QuickTopic that opens the contact card. */
-export const CONTACT_INTENT = "__contact__";
+export const CONTACT_INTENT = '__contact__';
 
 export interface QuickTopic {
   label: string;
@@ -114,7 +114,7 @@ export interface QuickTopic {
   icon?: ReactNode;
 }
 
-export type ContactChannelType = "email" | "phone" | "whatsapp" | "link";
+export type ContactChannelType = 'email' | 'phone' | 'whatsapp' | 'link';
 
 export interface ContactChannel {
   type: ContactChannelType;
@@ -142,7 +142,7 @@ export interface ChatbotLabels {
   online: string;
 }
 
-export type PersistenceMode = "local" | "session" | "none";
+export type PersistenceMode = 'local' | 'session' | 'none';
 
 export interface NudgeConfig {
   text: string;
@@ -175,19 +175,19 @@ export interface ThemeTokens {
   zIndex: string;
 }
 
-export type ChatbotPosition = "bottom-right" | "bottom-left";
+export type ChatbotPosition = 'bottom-right' | 'bottom-left';
 
 export type ChatbotEvent =
-  | { type: "open" }
-  | { type: "close" }
-  | { type: "message_sent"; text: string }
-  | { type: "faq_answered"; item: FAQItem }
-  | { type: "suggestions_shown"; items: FAQItem[] }
-  | { type: "ai_answered"; text: string }
-  | { type: "contact_offered" }
-  | { type: "contact_clicked"; channel: ContactChannel }
-  | { type: "reset" }
-  | { type: "error"; error: unknown };
+  | { type: 'open' }
+  | { type: 'close' }
+  | { type: 'message_sent'; text: string }
+  | { type: 'faq_answered'; item: FAQItem }
+  | { type: 'suggestions_shown'; items: FAQItem[] }
+  | { type: 'ai_answered'; text: string }
+  | { type: 'contact_offered' }
+  | { type: 'contact_clicked'; channel: ContactChannel }
+  | { type: 'reset' }
+  | { type: 'error'; error: unknown };
 
 /** Override the inline SVG glyphs the widget renders. */
 export interface IconSet {
@@ -236,7 +236,7 @@ export interface ChatbotProps {
   /** One-time welcome nudge bubble, or `false` to disable. */
   nudge?: NudgeConfig | false;
   /** Confidence tuning for the search resolver. */
-  confidence?: Pick<ResolveOptions, "answerCoverage" | "suggestCount">;
+  confidence?: Pick<ResolveOptions, 'answerCoverage' | 'suggestCount'>;
   /** Analytics / side-effect hook for conversation events. */
   onEvent?: (event: ChatbotEvent) => void;
   /** Override the built-in inline SVG icons. */

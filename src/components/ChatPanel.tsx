@@ -1,16 +1,9 @@
-import type {
-  ChatbotApi,
-} from "../hooks/useChatbot";
-import type {
-  ChatbotLabels,
-  ContactChannel,
-  IconSet,
-  QuickTopic,
-} from "../types";
-import { CONTACT_INTENT } from "../types";
-import { MessageList } from "./MessageList";
-import { Composer } from "./Composer";
-import { getIcon } from "./icons";
+import type { ChatbotApi } from '../hooks/useChatbot';
+import type { ChatbotLabels, ContactChannel, IconSet, QuickTopic } from '../types';
+import { CONTACT_INTENT } from '../types';
+import { MessageList } from './MessageList';
+import { Composer } from './Composer';
+import { getIcon } from './icons';
 
 interface ChatPanelProps {
   api: ChatbotApi;
@@ -53,7 +46,7 @@ export function ChatPanel({
     >
       <header className="rfc-header">
         <div className="rfc-header__id">
-          <span className="rfc-avatar">{getIcon("sparkles", icons)}</span>
+          <span className="rfc-avatar">{getIcon('sparkles', icons)}</span>
           <div>
             <h2 id="rfc-title" className="rfc-title">
               {labels.title}
@@ -72,7 +65,7 @@ export function ChatPanel({
             title={labels.resetAriaLabel}
             onClick={reset}
           >
-            {getIcon("reset", icons)}
+            {getIcon('reset', icons)}
           </button>
           <button
             type="button"
@@ -81,7 +74,7 @@ export function ChatPanel({
             title={labels.closeAriaLabel}
             onClick={onClose}
           >
-            {getIcon("close", icons)}
+            {getIcon('close', icons)}
           </button>
         </div>
       </header>

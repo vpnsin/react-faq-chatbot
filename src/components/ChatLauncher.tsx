@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import type { ChatbotLabels, IconSet, NudgeConfig } from "../types";
-import { getIcon } from "./icons";
+import { useEffect, useState } from 'react';
+import type { ChatbotLabels, IconSet, NudgeConfig } from '../types';
+import { getIcon } from './icons';
 
 interface ChatLauncherProps {
   open: boolean;
@@ -23,10 +23,10 @@ export function ChatLauncher({
 
   useEffect(() => {
     if (!nudge || open) return;
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
     let dismissed = false;
     try {
-      dismissed = window.sessionStorage.getItem(nudgeStorageKey) === "1";
+      dismissed = window.sessionStorage.getItem(nudgeStorageKey) === '1';
     } catch {
       /* storage unavailable */
     }
@@ -38,7 +38,7 @@ export function ChatLauncher({
   const dismissNudge = () => {
     setShowNudge(false);
     try {
-      window.sessionStorage.setItem(nudgeStorageKey, "1");
+      window.sessionStorage.setItem(nudgeStorageKey, '1');
     } catch {
       /* ignore */
     }
@@ -54,7 +54,7 @@ export function ChatLauncher({
             aria-label={labels.closeAriaLabel}
             onClick={dismissNudge}
           >
-            {getIcon("close", icons)}
+            {getIcon('close', icons)}
           </button>
           <button
             type="button"
@@ -71,7 +71,7 @@ export function ChatLauncher({
 
       <button
         type="button"
-        className={`rfc-launcher ${open ? "rfc-launcher--open" : ""}`}
+        className={`rfc-launcher ${open ? 'rfc-launcher--open' : ''}`}
         aria-label={labels.launcherAriaLabel}
         aria-expanded={open}
         aria-controls="rfc-panel"
@@ -81,7 +81,7 @@ export function ChatLauncher({
         }}
       >
         <span className="rfc-launcher__icon">
-          {open ? getIcon("close", icons) : getIcon("chat", icons)}
+          {open ? getIcon('close', icons) : getIcon('chat', icons)}
         </span>
       </button>
     </>

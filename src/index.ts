@@ -3,9 +3,9 @@
 // Remember to also import the stylesheet once in your app:
 //   import "@vpnsin-labs/react-faq-chatbot/styles.css";
 
-export { Chatbot } from "./components/Chatbot";
-export { useChatbot } from "./hooks/useChatbot";
-export type { ChatbotApi, UseChatbotOptions } from "./hooks/useChatbot";
+export { Chatbot } from './components/Chatbot';
+export { useChatbot } from './hooks/useChatbot';
+export type { ChatbotApi, UseChatbotOptions } from './hooks/useChatbot';
 
 // Search engine (use standalone if you build your own UI)
 export {
@@ -13,14 +13,14 @@ export {
   resolveFaqQuery,
   isConfidentMatch,
   DEFAULT_SYNONYMS,
-} from "./search/faqSearch";
+} from './search/faqSearch';
 
 // Icons (override or reuse)
-export { DefaultIcons, getIcon } from "./components/icons";
-export type { IconName } from "./components/icons";
+export { DefaultIcons, getIcon } from './components/icons';
+export type { IconName } from './components/icons';
 
 // Constants
-export { CONTACT_INTENT } from "./types";
+export { CONTACT_INTENT } from './types';
 
 // Types
 export type {
@@ -50,4 +50,4 @@ export type {
   IconSet,
   NudgeConfig,
   PersistenceMode,
-} from "./types";
+} from './types';

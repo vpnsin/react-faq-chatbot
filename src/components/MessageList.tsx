@@ -1,13 +1,7 @@
-import { useEffect, useRef } from "react";
-import type {
-  ChatbotLabels,
-  ChatMessage,
-  ContactChannel,
-  FAQItem,
-  IconSet,
-} from "../types";
-import { getIcon } from "./icons";
-import { contactHref, formatTime, iconNameForChannel } from "../utils/format";
+import { useEffect, useRef } from 'react';
+import type { ChatbotLabels, ChatMessage, ContactChannel, FAQItem, IconSet } from '../types';
+import { getIcon } from './icons';
+import { contactHref, formatTime, iconNameForChannel } from '../utils/format';
 
 interface MessageListProps {
   messages: ChatMessage[];
@@ -31,13 +25,13 @@ export function MessageList({
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, [messages, isTyping]);
 
   return (
     <div className="rfc-log" role="log" aria-live="polite" aria-label={labels.title}>
       {messages.map((message) => {
-        if (message.kind === "suggestions") {
+        if (message.kind === 'suggestions') {
           return (
             <div key={message.id} className="rfc-row rfc-row--start">
               <div className="rfc-bubble rfc-bubble--agent rfc-bubble--card">
@@ -49,7 +43,7 @@ export function MessageList({
                       className="rfc-chip"
                       onClick={() => onSelectSuggestion(item)}
                     >
-                      <span className="rfc-chip__icon">{getIcon("search", icons)}</span>
+                      <span className="rfc-chip__icon">{getIcon('search', icons)}</span>
                       {item.question}
                     </button>
                   ))}
@@ -59,7 +53,7 @@ export function MessageList({
           );
         }
 
-        if (message.kind === "contact") {
+        if (message.kind === 'contact') {
           return (
             <div key={message.id} className="rfc-row rfc-row--start">
               <div className="rfc-bubble rfc-bubble--agent rfc-bubble--card">
@@ -70,7 +64,11 @@ export function MessageList({
                       key={`${message.id}-${i}`}
                       className="rfc-contact__link"
                       href={contactHref(channel)}
-                      target={channel.type === "whatsapp" || channel.type === "link" ? "_blank" : undefined}
+                      target={
+                        channel.type === 'whatsapp' || channel.type === 'link'
+                          ? '_blank'
+                          : undefined
+                      }
                       rel="noopener noreferrer"
                       onClick={() => onContactClick(channel)}
                     >
@@ -87,20 +85,13 @@ export function MessageList({
         }
 
         // text message
-        const isUser = message.role === "user";
-        const isSystem = message.role === "system";
+        const isUser = message.role === 'user';
+        const isSystem = message.role === 'system';
         return (
-          <div
-            key={message.id}
-            className={`rfc-row ${isUser ? "rfc-row--end" : "rfc-row--start"}`}
-          >
+          <div key={message.id} className={`rfc-row ${isUser ? 'rfc-row--end' : 'rfc-row--start'}`}>
             <div
               className={`rfc-bubble ${
-                isUser
-                  ? "rfc-bubble--user"
-                  : isSystem
-                    ? "rfc-bubble--system"
-                    : "rfc-bubble--agent"
+                isUser ? 'rfc-bubble--user' : isSystem ? 'rfc-bubble--system' : 'rfc-bubble--agent'
               }`}
             >
               <p className="rfc-bubble__text">{message.content}</p>
